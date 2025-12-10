@@ -1,0 +1,6 @@
+<ul class="nav nav-underline flex-sm-column flex-row">
+    {{#each categories}}
+    <li class="nav-item"><a class="nav-link {{#if this.current}}active{{/if}}"
+            href="/categories/{{this.title}}">{{this.title}}</a></li>
+    {{/each}}
+</ul>

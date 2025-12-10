@@ -1,0 +1,33 @@
+<nav class="navbar bg-info bg-gradient bg-opacity-25 flex-column align-items-start flex-sm-row p-3 rounded">
+    <a href="/" class="navbar-brand">Home</a>
+    
+    <ul class="nav flex-column flex-sm-row me-auto">
+        <li class="nav-item"><a class="nav-link" href="/categories">Categories Management</a></li>
+        <li class="nav-item"><a class="nav-link" href="#">Services</a></li>
+    </ul>
+
+    <ul class="nav flex-column flex-sm-row">
+        {{#unless user}}
+            <li class="nav-item ms-sm-auto mt-2 mt-sm-0">
+                <a class="btn btn-outline-primary" href="/auth/login">Login</a>
+            </li>
+        {{/unless}}
+
+        {{#if user}}
+            <li class="nav-item dropdown ms-sm-auto mt-2 mt-sm-0">
+                <a class="btn bg-info bg-gradient bg-opacity-50 dropdown-toggle d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown">
+                    <span class="badge rounded-circle bg-warning text-dark d-flex justify-content-center align-items-center" style="width: 32px; height: 32px;">
+                        {{user.initials}}
+                    </span>
+                    <span class="ms-2">{{user.username}}</span>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end">
+                    <li><span class="dropdown-item-text fw-semibold">{{user.name}}</span></li>
+                    <li><span class="dropdown-item-text text-muted small">{{user.email}}</span></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item text-danger" href="/auth/logout">Logout</a></li>
+                </ul>
+            </li>
+        {{/if}}
+    </ul>
+</nav>

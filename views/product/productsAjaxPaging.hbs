@@ -1,0 +1,161 @@
+<style>
+    /* Animation loading skeleton */
+    @keyframes loading {
+        0% { background-position: 200% 0; }
+        100% { background-position: -200% 0; }
+    }
+
+    /* Fade-in animation cho card */
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .fade-in {
+        animation: fadeIn 0.5s ease-in-out;
+    }
+
+    /* Placeholder glow effect */
+    .placeholder-glow {
+        animation: placeholder-shimmer 2s infinite;
+    }
+
+    @keyframes placeholder-shimmer {
+        0% {
+            background-color: #e9ecef;
+        }
+        50% {
+            background-color: #f3f3f3;
+        }
+        100% {
+            background-color: #e9ecef;
+        }
+    }
+</style>
+
+<div id="products" class="row row-cols-1 row-cols-md-3 g-4"></div>
+
+<nav class="mt-4">
+    <ul class="pagination justify-content-center"></ul>
+</nav>
+
+<script>
+    // Hiển thị skeleton loading
+    function showSkeletonLoading() {
+        const productsContainer = document.getElementById('products');
+        productsContainer.innerHTML = '';
+        
+        for (let i = 0; i < 3; i++) {
+            productsContainer.innerHTML += `
+            <div class="col">
+                <div class="card h-100 shadow" aria-hidden="true">
+                    <div class="ratio ratio-1x1" style="background-color: #f3f3f3;">
+                        <div style="background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%); background-size: 200% 100%; animation: loading 1.5s infinite;"></div>
+                    </div>
+                    <div class="card-body mt-2">
+                        <h5 class="card-title placeholder-glow">
+                            <span class="placeholder col-8"></span>
+                        </h5>
+                        <p class="card-text placeholder-glow">
+                            <span class="placeholder col-7"></span>
+                            <span class="placeholder col-4"></span>
+                            <span class="placeholder col-4"></span>
+                            <span class="placeholder col-6"></span>
+                            <span class="placeholder col-8"></span>
+                        </p>
+                    </div>
+                    <div class="card-footer text-center">
+                        <a class="btn btn-primary disabled placeholder col-6" aria-disabled="true"></a>
+                    </div>
+                </div>
+            </div>`;
+        }
+    }
+
+    async function loadPage(page) {
+        // Hiển thị skeleton trước khi fetch
+        showSkeletonLoading();
+        
+        try {
+            const res = await fetch('/ajax', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ page })
+            });
+            
+            const data = await res.json();
+            
+            // Vẽ lại sản phẩm (với delay nhỏ để hiệu ứng rõ ràng)
+            setTimeout(() => {
+                const productsContainer = document.getElementById('products');
+                productsContainer.innerHTML = '';
+                data.products.forEach(product => {
+                    productsContainer.innerHTML += createProductCard(product);
+                });
+
+                // Vẽ lại phân trang
+                createPagination(data.totalPages, data.page);
+            }, 300); // Delay 300ms để thấy skeleton hiệu ứng
+        } catch (error) {
+            console.error('Lỗi tải dữ liệu:', error);
+            document.getElementById('products').innerHTML = '<div class="alert alert-danger">Lỗi tải dữ liệu!</div>';
+        }
+    }
+
+    function createProductCard(product) {
+        return `
+        <div class="col">
+            <div class="card h-100 shadow fade-in">
+                <div class="ratio ratio-1x1">
+                    <img src="${product.image_url}" class="img-card-top" alt="${product.title}" style="object-fit: contain; padding: 10px;">
+                </div>
+                <div class="card-body mt-2">
+                    <h4 class="card-title">${product.title}</h4>
+                    <p class="card-text text-truncate mt-3">${product.description}</p>
+                </div>
+                <div class="card-footer text-center">
+                    <a class="btn btn-primary" href="/products/${product.id}">Xem chi tiết</a>
+                </div>
+            </div>
+        </div>`;
+    }
+
+    function createPagination(totalPages, currentPage) {
+        const paginationContainer = document.querySelector('.pagination');
+        paginationContainer.innerHTML = '';
+
+        const prevClass = currentPage > 1 && totalPages > 1 ? 'page-item' : 'page-item disabled';
+        paginationContainer.innerHTML += `
+            <li class="${prevClass}">
+                <a class="page-link" href="#" onclick="loadPage(${currentPage - 1}); return false;" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>`;
+
+        for (let i = 1; i <= totalPages; i++) {
+            const pageClass = i === currentPage ? 'page-item active' : 'page-item';
+            paginationContainer.innerHTML += `
+                <li class="${pageClass}">
+                    <a class="page-link" href="#" onclick="loadPage(${i}); return false;">${i}</a>
+                </li>`;
+        }
+
+        const nextClass = currentPage < totalPages && totalPages > 1 ? 'page-item' : 'page-item disabled';
+        paginationContainer.innerHTML += `
+            <li class="${nextClass}">
+                <a class="page-link" href="#" onclick="loadPage(${currentPage + 1}); return false;" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>`;
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        loadPage(1);
+    });
+</script>

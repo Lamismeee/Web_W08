@@ -1,0 +1,37 @@
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-4">
+            <div class="card shadow-sm">
+                <div class="card-body p-4">
+                    <h3 class="card-title text-center mb-4">Đăng ký</h3>
+                    {{#if error}}<div class="alert alert-danger">{{error}}</div>{{/if}}
+                    <form method="POST" action="/auth/register">
+                        <div class="mb-3">
+                            <label class="form-label">Tên đăng nhập</label>
+                            <input type="text" class="form-control" name="username" value="{{form.username}}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Họ và tên</label>
+                            <input type="text" class="form-control" name="name" value="{{form.name}}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Email</label>
+                            <input type="email" class="form-control" name="email" value="{{form.email}}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Mật khẩu</label>
+                            <input type="password" class="form-control" name="password" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Xác nhận mật khẩu</label>
+                            <input type="password" class="form-control" name="confirmPassword" required>
+                        </div>
+                        <button type="submit" class="btn btn-success w-100 mb-3">Đăng ký</button>
+                    </form>
+                    <hr>
+                    <p class="text-center mb-0">Đã có tài khoản? <a href="/auth/login">Đăng nhập</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

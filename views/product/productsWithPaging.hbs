@@ -1,0 +1,65 @@
+<style>
+    /* Fade-in animation cho card */
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .fade-in {
+        animation: fadeIn 0.5s ease-in-out;
+    }
+
+    /* Stagger effect - mỗi card chậm 100ms */
+    .col:nth-child(1) .card { animation-delay: 0s; }
+    .col:nth-child(2) .card { animation-delay: 0.1s; }
+    .col:nth-child(3) .card { animation-delay: 0.2s; }
+</style>
+
+<div class="row row-cols-1 row-cols-md-3 g-4">
+    {{#each products}}
+    <div class="col">
+        <div class="card h-100 shadow fade-in">
+            <div class="ratio ratio-1x1">
+                <img src="{{this.image_url}}" class="img-card-top" alt="{{this.title}}" style="object-fit: contain; padding: 10px;">
+            </div>
+            <div class="card-body mt-2">
+                <h4 class="card-title">{{this.title}}</h4>
+                <p class="card-text text-truncate mt-3">{{this.description}}</p>
+            </div>
+            <div class="card-footer text-center">
+                <a class="btn btn-primary" href="/products/{{this.id}}">Xem chi tiết</a>
+            </div>
+        </div>
+    </div>
+    {{/each}}
+</div>
+
+<nav class="mt-4">
+    <ul class="pagination justify-content-center">
+        {{#if enablePrev}}
+            <li class="page-item"><a class="page-link" href="/{{sum page -1}}" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a></li>
+        {{else}}
+            <li class="page-item disabled"><a class="page-link" href="#" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a></li>
+        {{/if}}
+
+        {{#pages totalPages}}
+            {{#ifEquals this ../page}}
+                <li class="page-item active"><a class="page-link" href="/{{this}}">{{this}}</a></li>
+            {{else}}
+                <li class="page-item"><a class="page-link" href="/{{this}}">{{this}}</a></li>
+            {{/ifEquals}}
+        {{/pages}}
+
+        {{#if enableNext}}
+            <li class="page-item"><a class="page-link" href="/{{sum page 1}}" aria-label="Next"><span aria-hidden="true">&raquo;</span></a></li>
+        {{else}}
+            <li class="page-item disabled"><a class="page-link" href="#" aria-label="Next"><span aria-hidden="true">&raquo;</span></a></li>
+        {{/if}}
+    </ul>
+</nav>
